@@ -41,6 +41,8 @@ typedef struct {
     int players[MAX_PLAYERS_PER_ROOM];
     int num_players;
     int game_started;
+    int admin;
+    
 } Room;
 
 typedef struct {
@@ -52,6 +54,7 @@ typedef struct {
 User users[MAX_USERS];
 Room rooms[MAX_ROOMS];
 Question questions[MAX_QUESTIONS * MAX_CATEGORIES];
+Category categories[MAX_CATEGORIES];
 
 int num_users = 0;
 int num_rooms = 0;
@@ -437,7 +440,7 @@ int main() {
     load_users(); 
 
     Category categories[MAX_CATEGORIES]; 
-    initializeCategory(categories); // Pass the categories array and its size
+  //  initializeCategory(categories); // Pass the categories array and its size
 
     int choice;
     do {
@@ -465,4 +468,3 @@ int main() {
 
     return 0;
 }
-
