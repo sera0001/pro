@@ -243,7 +243,6 @@ void signup() {
     printf("Signup successful!\n");
 }
 
-// Create a room (admin is the first player)
 void create_room(int player_index) {
     if (num_rooms >= MAX_ROOMS) {
         printf("Maximum number of rooms reached. Cannot create more rooms.\n");
@@ -259,6 +258,15 @@ void create_room(int player_index) {
 
     printf("Room created. You are in Room %d (admin).\n", num_rooms + 1);
     printf("Waiting for other players to join...\n");
+
+    // Add a loop to wait for other players (you can customize the condition)
+    while (rooms[num_rooms].num_players < MIN_PLAYERS_TO_START) {
+        // Optionally, add a delay (e.g., sleep for a few seconds)
+        // This prevents the loop from consuming too much CPU
+         sleep(5); // Uncomment this line if needed
+    }
+
+    printf("All players have joined. The game can now start!\n");
 
     num_rooms++;
 }
