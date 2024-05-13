@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h> // For inet_addr()
+#include <unistd.h>    // For close()
+
 #include "category_initalizer.h"
 
 #define MAX_USERS 100
@@ -60,7 +65,34 @@ unsigned long hash(char *str) {
 
     return hash;
 }
+#define SERVER_IP "127.0.0.1" // Modify with your server's IP address
+#define SERVER_PORT 2000      // Modify with your server's port
 
+int connect_to_server() {
+    int sockfd;
+    struct sockaddr_in servaddr;
+
+    // Create a socket
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd == -1) {
+        perror("Socket creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Set up server address
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = inet_addr(SERVER_IP);
+    servaddr.sin_port = htons(SERVER_PORT);
+
+    // Connect to the server
+    if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) != 0) {
+        perror("Connection failed");
+        exit(EXIT_FAILURE);
+    }
+
+    return sockfd; // Return the connected socket descriptor
+}
 void save_users() {
     FILE *file = fopen("users.txt", "w");
     if (file == NULL) {
@@ -396,6 +428,7 @@ void login() {
 }
 
 int main() {
+    int server_socket = connect_to_server();
     srand(time(NULL)); 
 
     load_users(); 
