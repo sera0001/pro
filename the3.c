@@ -240,6 +240,7 @@ void signup() {
     printf("Signup successful!\n");
 }
 
+// Create a room (admin is the first player)
 void create_room(int player_index) {
     if (num_rooms >= MAX_ROOMS) {
         printf("Maximum number of rooms reached. Cannot create more rooms.\n");
@@ -249,15 +250,17 @@ void create_room(int player_index) {
     rooms[num_rooms].players[0] = player_index;
     rooms[num_rooms].num_players = 1;
     rooms[num_rooms].game_started = 0;
+    rooms[num_rooms].admin = player_index; // Set the admin
 
     users[player_index].in_room = num_rooms;
 
-    printf("Room created. You are in Room %d.\n", num_rooms + 1);
+    printf("Room created. You are in Room %d (admin).\n", num_rooms + 1);
     printf("Waiting for other players to join...\n");
 
     num_rooms++;
 }
 
+// Join an existing room
 void join_room(int player_index) {
     printf("Available Rooms:\n");
     for (int i = 0; i < num_rooms; i++) {
