@@ -17,6 +17,7 @@
 #define MAX_OPTIONS 4
 #define MAX_ROOMS 10
 #define MAX_PLAYERS_PER_ROOM 2
+# define MIN_PLAYERS_TO_START 3
 
 // ANSI escape codes for colored text
 #define ANSI_COLOR_RESET "\x1b[0m"
@@ -24,11 +25,11 @@
 #define ANSI_COLOR_CORRECT "\x1b[32m"    // Green color for correct answers
 #define ANSI_COLOR_INCORRECT "\x1b[31m"  // Red color for incorrect answers
 
-typedef struct {
+/*typedef struct {
     char question[256];
     char options[MAX_OPTIONS][64];
     int correct_option;
-} Question;
+} Question;*/
 
 typedef struct {
     char username[MAX_USERNAME];
@@ -45,16 +46,18 @@ typedef struct {
     
 } Room;
 
-typedef struct {
+/*typedef struct {
     char name[64];
     int question_indices[MAX_QUESTIONS];
     int num_questions;
-} Category;
+} Category;*/
 
 User users[MAX_USERS];
 Room rooms[MAX_ROOMS];
 Question questions[MAX_QUESTIONS * MAX_CATEGORIES];
-Category categories[MAX_CATEGORIES];
+//Category categories[MAX_CATEGORIES];
+void quiz(int categoryIndex);
+
 
 int num_users = 0;
 int num_rooms = 0;
@@ -139,7 +142,9 @@ void displayCategoryQuestions(int categoryIndex) {
     printf("Number of Questions: %d\n", categories[categoryIndex].num_questions);
 
     for (int i = 0; i < categories[categoryIndex].num_questions; i++) {
-        Question current_question = categories[categoryIndex].questions[i];
+        int questionIndex = categories[categoryIndex].question_indices[i];
+        Question current_question = questions[questionIndex];
+
         printf("Question %d:\n", i + 1);
         printf("  %s\n", current_question.question);
         printf("  Options:\n");
