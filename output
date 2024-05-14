@@ -1,0 +1,99 @@
+--- Menu ---
+1. Signup
+2. Login
+3. Exit
+Enter your choice: 2
+Enter your username: sera
+Enter your password: 0001
+Login successful!
+Welcome, sera!
+What would you like to do?
+1. Create a Room
+2. Join a Room
+3. Start Quiz
+4. View High Scores
+5. Logout
+Enter your choice: 3
+Welcome to the Quiz Game!
+Choose a category:
+1. Films
+2. Sports
+3. Science
+4. History
+5. Art
+6. Computer Science
+Enter the number of your chosen category (1-6): 1
+Category: 
+Number of Questions: 5
+Question 1:
+  Who directed the movie 'Inception'?
+  Options:
+    1. Christopher Nolan
+    2. Martin Scorsese
+    3. James Cameron
+    4. Steven Spielberg
+Question 2:
+  Which actor portrayed the character Tony Stark in the Marvel Cinematic Universe?
+  Options:
+    1. Robert Downey Jr.
+    2. Chris Evans
+    3. Chris Hemsworth
+    4. Mark Ruffalo
+Question 3:
+  
+  Options:
+    1. 
+    2. 
+    3. 
+    4. 
+Question 4:
+  
+  Options:
+    1. 
+    2. 
+    3. 
+    4. 
+Question 5:
+  
+  Options:
+    1. 
+    2. 
+    3. 
+    4. 
+Welcome to the Quiz Game!
+Question:
+  
+  Options:
+    1. 
+    2. 
+    3. 
+    4. 
+Enter your answer (1-4): 1
+Incorrect!
+Question:
+  
+  Options:
+    1. 
+    2. 
+    3. 
+    4. 
+Enter your answer (1-4): 1
+Incorrect!
+Question:
+  
+  Options:
+    1. 
+    2. 
+    3. 
+    4. 
+Enter your answer (1-4): 1
+Incorrect!
+Quiz finished! Your final score: 0/5
+Choose a category:
+1. Films
+2. Sports
+3. Science
+4. History
+5. Art
+6. Computer Science
+Enter the number of your chosen category (1-6): 
