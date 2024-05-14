@@ -329,13 +329,8 @@ void quiz(int categoryIndex) {
     int *question_indices = categories[categoryIndex].question_indices;
 
     int score = 0;
-    int time_up = 0;
     printf("Welcome to the Quiz Game!\n");
 
-    time_t start_time, current_time;
-    double elapsed_seconds;
-
-    time(&start_time);
     for (int i = 0; i < num_questions; i++) {
         int random_index = rand() % num_questions;
         int questionIndex = question_indices[random_index];
@@ -347,14 +342,6 @@ void quiz(int categoryIndex) {
         int user_answer;
         printf("Enter your answer (1-4): ");
         scanf("%d", &user_answer);
-
-        time(&current_time);
-        elapsed_seconds = difftime(current_time, start_time);
-        if (elapsed_seconds >= 30.0) {
-            printf("Time's up! Quiz stopped. Your final score: %d/%d\n", score, num_questions);
-            time_up = 1;
-            break;
-        }
 
         if (user_answer >= 1 && user_answer <= MAX_OPTIONS) {
             if (checkAnswer(current_question, user_answer)) {
@@ -375,11 +362,8 @@ void quiz(int categoryIndex) {
         num_questions--;
     }
 
-    if (!time_up) {
-        printf("Quiz finished! Your final score: %d/%d\n", score, categories[categoryIndex].num_questions);
-    }
+    printf("Quiz finished! Your final score: %d/%d\n", score, categories[categoryIndex].num_questions);
 }
-
 
 void login() {
     char username[MAX_USERNAME];
