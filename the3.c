@@ -135,34 +135,18 @@ void displayUserScore(char *username) {
 }
 
 void displayCategoryQuestions(int categoryIndex) {
-    extern Category categories[MAX_CATEGORIES];  
-
-    if (categoryIndex < 0 || categoryIndex >= MAX_CATEGORIES) {
-        printf("Invalid category index.\n");
-        return;
-    }
-
     printf("Category: %s\n", categories[categoryIndex].name);
     printf("Number of Questions: %d\n", categories[categoryIndex].num_questions);
 
-    int num_questions = categories[categoryIndex].num_questions;
-    int *question_indices = categories[categoryIndex].question_indices;
-
-    if (num_questions > 0) {
-        for (int i = 0; i < num_questions; i++) {
-            int questionIndex = question_indices[i];
-            Question current_question = questions[questionIndex];
-
-            printf("Question %d:\n", i + 1);
-            printf("  %s\n", current_question.question);
-            printf("  Options:\n");
-            for (int j = 0; j < MAX_OPTIONS; j++) {
-                printf("    %d. %s\n", j + 1, current_question.options[j]);
-            }
-            printf("  Correct Option: %d\n", current_question.correct_option);
+    for (int i = 0; i < categories[categoryIndex].num_questions; i++) {
+        Question current_question = categories[categoryIndex].questions[i];
+        printf("Question %d:\n", i + 1);
+        printf("  %s\n", current_question.question);
+        printf("  Options:\n");
+        for (int j = 0; j < MAX_OPTIONS; j++) {
+            printf("    %d. %s\n", j + 1, current_question.options[j]);
         }
-    } else {
-        printf("No questions available for this category.\n");
+        printf("  Correct Option: %d\n", current_question.correct_option);
     }
 }
 
@@ -200,14 +184,14 @@ void startGame() {
         printf("Enter the number of your chosen category (1-6): ");
         scanf("%d", &categoryChoice);
 
-        if (categoryChoice < 1 || categoryChoice > 6) {
-            printf("Invalid choice. Please enter a number between 1 and 6.\n");
+        if (categoryChoice < 1 || categoryChoice > MAX_CATEGORIES) {
+            printf("Invalid choice. Please enter a number between 1 and %d.\n", MAX_CATEGORIES);
         } else {
-            quiz(categoryChoice - 1); // Pass category index to quiz function
+            displayCategoryQuestions(categoryChoice - 1);
+            quiz(categoryChoice - 1);
         }
-    } while (categoryChoice >= 1 && categoryChoice <= 6);
+    } while (categoryChoice >= 1 && categoryChoice <= MAX_CATEGORIES);
 }
-
 void signup() {
     if (num_users >= MAX_USERS) {
         printf("User limit reached. Signup failed.\n");
@@ -447,9 +431,9 @@ int main() {
 
     load_users(); 
 
-    Category categories[MAX_CATEGORIES]; 
-  //  initializeCategory(categories); // Pass the categories array and its size
-
+     for (int i = 0; i < MAX_CATEGORIES; i++) {
+        initializeCategory(i);
+    }
     int choice;
     do {
         printf("\n--- Menu ---\n");
