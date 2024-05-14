@@ -142,18 +142,16 @@ void displayCategoryQuestions(int categoryIndex) {
     printf("Number of Questions: %d\n", categories[categoryIndex].num_questions);
 
     for (int i = 0; i < categories[categoryIndex].num_questions; i++) {
-        int questionIndex = categories[categoryIndex].question_indices[i];
-        Question current_question = questions[questionIndex];
-
+        Question current_question = categories[categoryIndex].questions[i];
         printf("Question %d:\n", i + 1);
         printf("  %s\n", current_question.question);
         printf("  Options:\n");
         for (int j = 0; j < MAX_OPTIONS; j++) {
             printf("    %d. %s\n", j + 1, current_question.options[j]);
         }
-        printf("  Correct Option: %d\n", current_question.correct_option);
     }
 }
+
 
 void films(int difficulty) {
     displayCategoryQuestions(0);
@@ -291,10 +289,12 @@ int checkAnswer(Question q, int user_answer) {
     return (user_answer == q.correct_option);
 }
 
-void displayQuestion(Question q) {
-    printf("%s\n", q.question);
-    for (int i = 0; i < MAX_OPTIONS; i++) {
-        printf("%d. %s\n", i + 1, q.options[i]);
+void displayQuestion(Question question) {
+    printf("Question:\n");
+    printf("  %s\n", question.question);
+    printf("  Options:\n");
+    for (int j = 0; j < MAX_OPTIONS; j++) {
+        printf("    %d. %s\n", j + 1, question.options[j]);
     }
 }
 
@@ -317,7 +317,6 @@ void displayColoredQuestion(Question q) {
         printf("%d. %s\n", i + 1, q.options[indices[i]]);
     }
 }
-
 void quiz(int categoryIndex) {
     extern Category categories[MAX_CATEGORIES];  
 
@@ -342,7 +341,8 @@ void quiz(int categoryIndex) {
         int questionIndex = question_indices[random_index];
         Question current_question = questions[questionIndex];
 
-        displayColoredQuestion(current_question);
+        // Display only the current question
+        displayQuestion(current_question);
 
         int user_answer;
         printf("Enter your answer (1-4): ");
