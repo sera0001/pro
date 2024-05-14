@@ -152,6 +152,22 @@ void displayCategoryQuestions(int categoryIndex) {
     }
 }
 
+void displaySingleQuestion(int categoryIndex, int questionIndex) {
+    if (categoryIndex < 0 || categoryIndex >= MAX_CATEGORIES) {
+        printf("Invalid category index.\n");
+        return;
+    }
+
+    if (questionIndex < 0 || questionIndex >= categories[categoryIndex].num_questions) {
+        printf("Invalid question index.\n");
+        return;
+    }
+
+    Question current_question = categories[categoryIndex].questions[questionIndex];
+    displayQuestion(current_question);
+}
+
+
 
 void films(int difficulty) {
     displayCategoryQuestions(0);
@@ -334,16 +350,16 @@ void quiz(int categoryIndex) {
     for (int i = 0; i < num_questions; i++) {
         int random_index = rand() % num_questions;
         int questionIndex = question_indices[random_index];
-        Question current_question = questions[questionIndex];
 
         // Display only the current question
-        displayQuestion(current_question);
+        displaySingleQuestion(categoryIndex, questionIndex);
 
         int user_answer;
         printf("Enter your answer (1-4): ");
         scanf("%d", &user_answer);
 
         if (user_answer >= 1 && user_answer <= MAX_OPTIONS) {
+            Question current_question = categories[categoryIndex].questions[questionIndex];
             if (checkAnswer(current_question, user_answer)) {
                 printf("%sCorrect!%s\n", ANSI_COLOR_CORRECT, ANSI_COLOR_RESET);
                 score++;
@@ -364,6 +380,7 @@ void quiz(int categoryIndex) {
 
     printf("Quiz finished! Your final score: %d/%d\n", score, categories[categoryIndex].num_questions);
 }
+
 
 void login() {
     char username[MAX_USERNAME];
