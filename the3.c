@@ -206,7 +206,7 @@ void startGame() {
         if (categoryChoice < 1 || categoryChoice > MAX_CATEGORIES) {
             printf("Invalid choice. Please enter a number between 1 and %d.\n", MAX_CATEGORIES);
         } else {
-            displayCategoryQuestions(categoryChoice - 1);
+           // displayCategoryQuestions(categoryChoice - 1);
             quiz(categoryChoice - 1);
         }
     } while (categoryChoice >= 1 && categoryChoice <= MAX_CATEGORIES);
@@ -348,8 +348,9 @@ void quiz(int categoryIndex) {
     printf("Welcome to the Quiz Game!\n");
 
     for (int i = 0; i < num_questions; i++) {
-        int random_index = rand() % num_questions;
+        int random_index = rand() % (num_questions - i); // Select a random index from the remaining questions
         int questionIndex = question_indices[random_index];
+        Question current_question = questions[questionIndex];
 
         // Display only the current question
         displaySingleQuestion(categoryIndex, questionIndex);
@@ -359,7 +360,6 @@ void quiz(int categoryIndex) {
         scanf("%d", &user_answer);
 
         if (user_answer >= 1 && user_answer <= MAX_OPTIONS) {
-            Question current_question = categories[categoryIndex].questions[questionIndex];
             if (checkAnswer(current_question, user_answer)) {
                 printf("%sCorrect!%s\n", ANSI_COLOR_CORRECT, ANSI_COLOR_RESET);
                 score++;
@@ -375,11 +375,11 @@ void quiz(int categoryIndex) {
             question_indices[j] = question_indices[j + 1];
         }
         question_indices[num_questions - 1] = -1; // Mark the last index as invalid or unused
-        num_questions--;
     }
 
     printf("Quiz finished! Your final score: %d/%d\n", score, categories[categoryIndex].num_questions);
 }
+
 
 
 void login() {
