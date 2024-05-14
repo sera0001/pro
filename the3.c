@@ -380,6 +380,7 @@ void quiz(int categoryIndex) {
     }
 }
 
+
 void login() {
     char username[MAX_USERNAME];
     char password[MAX_PASSWORD];
