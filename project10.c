@@ -355,7 +355,8 @@ void shuffleArray(int *array, int n) {
 
 void quiz(int categoryIndex, int connfd) {
     if (categoryIndex < 0 || categoryIndex >= MAX_CATEGORIES) {
-        write(connfd, "Invalid category index.\n", strlen("Invalid category index.\n"));
+        char invalidIndexMessage[] = "Invalid category index.\n";
+        send(connfd, invalidIndexMessage, sizeof(invalidIndexMessage), 0);
         return;
     }
 
@@ -375,7 +376,8 @@ void quiz(int categoryIndex, int connfd) {
     }
 
     int score = 0;
-    write(connfd, "Welcome to the Quiz Game!\n", strlen("Welcome to the Quiz Game!\n"));
+    char welcomeMessage[] = "Welcome to the Quiz Game!\n";
+    send(connfd, welcomeMessage, sizeof(welcomeMessage), 0);
 
     time_t start_time, current_time;
     double elapsed_seconds;
@@ -388,40 +390,40 @@ void quiz(int categoryIndex, int connfd) {
         time(&current_time); 
         elapsed_seconds = difftime(current_time, start_time);
         int remaining_time = 30 - (int)elapsed_seconds;
-        char time_message[1024];
-        sprintf(time_message, "Time remaining: %d seconds\n", remaining_time);
-        write(connfd, time_message, strlen(time_message));
+        char timeMessage[50];
+        sprintf(timeMessage, "Time remaining: %d seconds\n", remaining_time);
+        send(connfd, timeMessage, sizeof(timeMessage), 0);
 
-        // Send question to client
-        write(connfd, current_question.question_text, strlen(current_question.question_text));
+        displaySingleQuestion(categoryIndex, questionIndex, connfd);
 
-        // Get client's answer
-        char client_answer[1024];
-        read(connfd, client_answer, sizeof(client_answer));
+        int user_answer;
+        recv(connfd, &user_answer, sizeof(user_answer), 0);
 
-        // Check client's answer
         if (remaining_time <= 0) {
-            char score_message[1024];
-            sprintf(score_message, "Time's up! Quiz stopped. Your final score: %d/%d\n", score, num_questions);
-            write(connfd, score_message, strlen(score_message));
+            char timesUpMessage[50];
+            sprintf(timesUpMessage, "Time's up! Quiz stopped. Your final score: %d/%d\n", score, num_questions);
+            send(connfd, timesUpMessage, sizeof(timesUpMessage), 0);
             return; 
         }
 
-        if (client_answer[0] >= '1' && client_answer[0] <= '4') {
-            if (checkAnswer(current_question, client_answer)) {
-                write(connfd, "Correct!\n", strlen("Correct!\n"));
+        if (user_answer >= 1 && user_answer <= MAX_OPTIONS) {
+            if (checkAnswer(current_question, user_answer)) {
+                char correctMessage[] = "Correct!\n";
+                send(connfd, correctMessage, sizeof(correctMessage), 0);
                 score++;
             } else {
-                write(connfd, "Incorrect. Try again!\n", strlen("Incorrect. Try again!\n"));
+                char incorrectMessage[] = "Incorrect!\n";
+                send(connfd, incorrectMessage, sizeof(incorrectMessage), 0);
             }
         } else {
-            write(connfd, "Invalid input. Skipping question.\n", strlen("Invalid input. Skipping question.\n"));
+            char invalidInputMessage[] = "Invalid input. Skipping question.\n";
+            send(connfd, invalidInputMessage, sizeof(invalidInputMessage), 0);
         }
     }
 
-    char final_score_message[1024];
-    sprintf(final_score_message, "Quiz finished! Your final score: %d/%d\n", score, num_questions);
-    write(connfd, final_score_message, strlen(final_score_message));
+    char finishedMessage[50];
+    sprintf(finishedMessage, "Quiz finished! Your final score: %d/%d\n", score, num_questions);
+    send(connfd, finishedMessage, sizeof(finishedMessage), 0);
 }
 
 
