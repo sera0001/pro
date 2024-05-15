@@ -1,11 +1,4 @@
-Connected to the server at 127.0.0.1:2000
-
---- Menu ---
-1. Signup
-2. Login
-3. Play as a guest
-4. Exit
-Enter your choice: 2
+2
 Server says: 
 --- Menu ---
 1. Signup
@@ -20,14 +13,104 @@ Enter your choice:
 3. Play as a guest
 4. Exit
 Enter your choice: 1
-Server says: Invalid choice. Please enter a number from 1 to 4.
-
+Server says: Enter username: 
 
 --- Menu ---
 1. Signup
 2. Login
 3. Play as a guest
 4. Exit
-Enter your choice: 4
-Server says: Invalid choice. Please enter a number from 1 to 4.
+Enter your choice: 2
+Server says: Enter password: 
 
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 2
+Server says: Invalid username or password.
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 2
+Server says: Enter username: 
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 1
+Server says: Enter password: 
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 2
+Server says: Invalid username or password.
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 3
+Server says: Enter username: 
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 1
+Server says: Enter password: 
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 2
+Server says: Invalid username or password.
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice: 3
+Server says: Enter username: 
+
+--- Menu ---
+1. Signup
+2. Login
+3. Play as a guest
+4. Exit
+Enter your choice:
