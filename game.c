@@ -534,9 +534,12 @@ void *handle_client(void *arg) {
                 send(connfd, exitMessage, sizeof(exitMessage), 0);
                 break;
             default:
-                printf("Client chose an invalid option.\n");
-                char invalidChoiceMessage[] = "Invalid choice. Please enter a number from 1 to 4.\n";
-                send(connfd, invalidChoiceMessage, sizeof(invalidChoiceMessage), 0);
+              default:
+    printf("Client chose an invalid option.\n");
+    char invalidChoiceMessage[] = "Invalid choice. Please enter a number from 1 to 4.\n";
+    send(connfd, invalidChoiceMessage, sizeof(invalidChoiceMessage), 0);
+    continue;
+
         }
     } while (choice != 4);
 
