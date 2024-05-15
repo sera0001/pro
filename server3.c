@@ -22,16 +22,23 @@ void *handle_client(void *arg) {
         char menuMessage[] = "\n--- Menu ---\n1. Signup\n2. Login\n3. Play as a guest\n4. Exit\nEnter your choice: ";
         send(connfd, menuMessage, sizeof(menuMessage), 0);
 
-        recv(connfd, &choice, sizeof(choice), 0);
+        int bytes_received = recv(connfd, &choice, sizeof(choice), 0);
+        if (bytes_received <= 0) {
+            printf("Client disconnected.\n");
+            break; // Exit the loop if client disconnected
+        }
 
         switch (choice) {
             case 1:
+                printf("Client chose to signup.\n");
                 signup(connfd);
                 break;
             case 2:
+                printf("Client chose to login.\n");
                 login(connfd);
                 break;
             case 3:
+                printf("Client chose to play as a guest.\n");
                 // The server should send game data after the connection is established
                 char game_data[1024];
                 recv(connfd, game_data, sizeof(game_data), 0);
@@ -40,17 +47,21 @@ void *handle_client(void *arg) {
                 startGame(connfd);
                 break;
             case 4:
+                printf("Client chose to exit.\n");
                 char exitMessage[] = "Exiting program...\n";
                 send(connfd, exitMessage, sizeof(exitMessage), 0);
                 break;
             default:
+                printf("Client chose an invalid option.\n");
                 char invalidChoiceMessage[] = "Invalid choice. Please enter a number from 1 to 4.\n";
                 send(connfd, invalidChoiceMessage, sizeof(invalidChoiceMessage), 0);
         }
     } while (choice != 4);
 
     close(connfd);
+    return NULL;
 }
+
 
 int main() {
     int sockfd, connfd, len;
