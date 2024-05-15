@@ -91,7 +91,9 @@ int main() {
         }
 
         pthread_t tid;
-        if (pthread_create(&tid, NULL, handle_client, &connfd) != 0) {
+        int *new_sock = malloc(sizeof(int));
+        *new_sock = connfd;
+        if (pthread_create(&tid, NULL, handle_client, new_sock) != 0) {
             perror("Failed to create thread");
             close(connfd);
         }
