@@ -533,7 +533,6 @@ void *handle_client(void *arg) {
                 char exitMessage[] = "Exiting program...\n";
                 send(connfd, exitMessage, sizeof(exitMessage), 0);
                 break;
-            default:
               default:
     printf("Client chose an invalid option.\n");
     char invalidChoiceMessage[] = "Invalid choice. Please enter a number from 1 to 4.\n";
