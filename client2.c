@@ -7,16 +7,15 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define SERVER_IP "127.0.0.1" // replace with your server IP
-#define SERVER_PORT 2000 // replace with your server port
+#define SERVER_IP "127.0.0.1"
+#define SERVER_PORT 2000
 
-int connect_to_server() {
+int main() {
     int sockfd;
     struct sockaddr_in servaddr;
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
-        perror("Socket creation failed");
         exit(EXIT_FAILURE);
     }
 
@@ -24,27 +23,37 @@ int connect_to_server() {
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = inet_addr(SERVER_IP);
     servaddr.sin_port = htons(SERVER_PORT);
-
     if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) != 0) {
-        perror("Connection failed");
         exit(EXIT_FAILURE);
     }
 
-    return sockfd;
-}
-int main() {
-    int sockfd = connect_to_server();
+    int choice;
+    do {
+        char menuMessage[1024];
+        recv(sockfd, menuMessage, sizeof(menuMessage), 0);
+        printf("%s", menuMessage);
 
-    if (sockfd < 0) {
-        printf("Failed to connect to server.\n");
-        return EXIT_FAILURE;
-    }
+        scanf("%d", &choice);
+        send(sockfd, &choice, sizeof(choice), 0);
 
-    printf("Connected to server.\n");
-
-    // Add your client code here...
+        switch (choice) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                char game_data[1024];
+                recv(sockfd, game_data, sizeof(game_data), 0);
+                break;
+            case 4:
+                printf("Exiting program...\n");
+                break;
+            default:
+                printf("Invalid choice. Please enter a number from 1 to 4.\n");
+        }
+    } while (choice != 4);
 
     close(sockfd);
-    return EXIT_SUCCESS;
-}
 
+    return 0;
+}
