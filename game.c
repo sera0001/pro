@@ -435,25 +435,24 @@ void login(int connfd) {
     char username[MAX_USERNAME];
     char password[MAX_PASSWORD];
    
-
-    printf("Enter your username: ");
-    scanf("%s", username);
-    printf("Enter your password: ");
-    scanf("%s", password);
-
-    // Send the username and password to the server
-    write(sockfd, username, sizeof(username));
-    write(sockfd, password, sizeof(password));
-
-    // Receive username from client
-    if (read(connfd, username, sizeof(username)) == -1) {
-        perror("Error reading username");
+ char prompt[] = "Enter username: ";
+    if (send(connfd, prompt, sizeof(prompt), 0) == -1) {
+        perror("Error sending username prompt");
+        return;
+    }
+    if (recv(connfd, username, sizeof(username), 0) == -1) {
+        perror("Error receiving username");
         return;
     }
 
-    // Receive password from client
-    if (read(connfd, password, sizeof(password)) == -1) {
-        perror("Error reading password");
+    // Prompt for password
+    char prompt2[] = "Enter password: ";
+    if (send(connfd, prompt2, sizeof(prompt2), 0) == -1) {
+        perror("Error sending password prompt");
+        return;
+    }
+    if (recv(connfd, password, sizeof(password), 0) == -1) {
+        perror("Error receiving password");
         return;
     }
 
