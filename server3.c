@@ -17,17 +17,37 @@ void *handle_client(void *arg) {
     int connfd = *((int *)arg);
     free(arg); // Don't forget to free the memory!
 
-    // Here you can call the functions from game.c as needed
-    // For example, if the client sends a request to join a room:
-    int player_index = ...; // Get the player index
-    join_room(player_index, connfd);
+    int choice;
+    do {
+        char menuMessage[] = "\n--- Menu ---\n1. Signup\n2. Login\n3. Play as a guest\n4. Exit\nEnter your choice: ";
+        send(connfd, menuMessage, sizeof(menuMessage), 0);
 
-    // Or if the client sends a request to create a room:
-    create_room(player_index, connfd);
+        recv(connfd, &choice, sizeof(choice), 0);
 
-    // Or if the client sends a request to start a quiz:
-    int categoryIndex = ...; // Get the category index
-    quiz(categoryIndex, connfd);
+        switch (choice) {
+            case 1:
+                signup(connfd);
+                break;
+            case 2:
+                login(connfd);
+                break;
+            case 3:
+                // The server should send game data after the connection is established
+                char game_data[1024];
+                recv(connfd, game_data, sizeof(game_data), 0);
+
+                // Start your game here using the game_data
+                startGame(connfd);
+                break;
+            case 4:
+                char exitMessage[] = "Exiting program...\n";
+                send(connfd, exitMessage, sizeof(exitMessage), 0);
+                break;
+            default:
+                char invalidChoiceMessage[] = "Invalid choice. Please enter a number from 1 to 4.\n";
+                send(connfd, invalidChoiceMessage, sizeof(invalidChoiceMessage), 0);
+        }
+    } while (choice != 4);
 
     close(connfd);
 }
