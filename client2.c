@@ -7,12 +7,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define SERVER_IP "127.0.0.1"
-#define SERVER_PORT 2000
-
-void signup(int sockfd) ;
-
-void startGame(int sockfd) ;
+#define SERVER_IP "127.0.0.1" // replace with your server IP
+#define SERVER_PORT 2000 // replace with your server port
 
 int main() {
     int sockfd;
@@ -25,19 +21,18 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    // Initialize server address
+    // Connect to the server
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = inet_addr(SERVER_IP);
     servaddr.sin_port = htons(SERVER_PORT);
-
-    // Connect to the server
     if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) != 0) {
-        perror("Connection failed");
+        perror("Server connection failed");
         exit(EXIT_FAILURE);
     }
 
-    // Client menu
+    printf("Connected to the server at %s:%d\n", SERVER_IP, SERVER_PORT);
+
     int choice;
     do {
         printf("\n--- Menu ---\n");
@@ -51,27 +46,20 @@ int main() {
         // Send choice to server
         write(sockfd, &choice, sizeof(choice));
 
-        switch (choice) {
-            case 1:
-                signup(sockfd);
-                break;
-            case 2:
-                // Implement login functionality
-                break;
-            case 3:
-                // Request game data from the server
-                char game_data[1024];
-                read(sockfd, game_data, sizeof(game_data));
+        // Now let's handle the server's response
+        char server_response[1024]; // Adjust the size as needed
+        int bytes_received = read(sockfd, server_response, sizeof(server_response) - 1);
 
-                // Start game with received game data
-                startGame(sockfd);
-                break;
-            case 4:
-                printf("Exiting program...\n");
-                break;
-            default:
-                printf("Invalid choice. Please enter a number from 1 to 4.\n");
+        if (bytes_received < 0) {
+            perror("read failed");
+            exit(EXIT_FAILURE);
         }
+
+        // Null-terminate the string
+        server_response[bytes_received] = '\0';
+
+        printf("Server says: %s\n", server_response);
+
     } while (choice != 4);
 
     close(sockfd);
