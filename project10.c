@@ -202,27 +202,27 @@ void startGame(char* game_data) {
     } while (categoryChoice >= 1 && categoryChoice <= MAX_CATEGORIES);
 }
 
-void signup() {
+void signup(int connfd) {
     if (num_users >= MAX_USERS) {
-        printf("User limit reached. Signup failed.\n");
+        write(connfd, "User limit reached. Signup failed.\n", strlen("User limit reached. Signup failed.\n"));
         return;
     }
 
     char username[MAX_USERNAME];
     char password[MAX_PASSWORD];
 
-    printf("Enter your desired username: ");
-    scanf("%s", username);
+    // Receive username from client
+    read(connfd, username, sizeof(username));
 
     for (int i = 0; i < num_users; i++) {
         if (strcmp(users[i].username, username) == 0) {
-            printf("Username already taken. Signup failed.\n");
+            write(connfd, "Username already taken. Signup failed.\n", strlen("Username already taken. Signup failed.\n"));
             return;
         }
     }
 
-    printf("Enter your desired password: ");
-    scanf("%s", password);
+    // Receive password from client
+    read(connfd, password, sizeof(password));
 
     unsigned long password_hash = hash(password);
 
@@ -234,12 +234,13 @@ void signup() {
 
     save_users();
 
-    printf("Signup successful!\n");
+    write(connfd, "Signup successful!\n", strlen("Signup successful!\n"));
 }
 
-void create_room(int player_index) {
+
+void create_room(int player_index, int connfd) {
     if (num_rooms >= MAX_ROOMS) {
-        printf("Maximum number of rooms reached. Cannot create more rooms.\n");
+        write(connfd, "Maximum number of rooms reached. Cannot create more rooms.\n", strlen("Maximum number of rooms reached. Cannot create more rooms.\n"));
         return;
     }
 
@@ -250,36 +251,38 @@ void create_room(int player_index) {
 
     users[player_index].in_room = num_rooms;
 
-    printf("Room created. You are in Room %d (admin).\n", num_rooms + 1);
-    printf("Waiting for other players to join...\n");
+    char room_message[1024];
+    sprintf(room_message, "Room created. You are in Room %d (admin).\n", num_rooms + 1);
+    write(connfd, room_message, strlen(room_message));
+    write(connfd, "Waiting for other players to join...\n", strlen("Waiting for other players to join...\n"));
 
-    
     while (rooms[num_rooms].num_players < MIN_PLAYERS_TO_START) {
-       
-         sleep(5); 
+        sleep(5); 
     }
 
-    printf("All players have joined. The game can now start!\n");
+    write(connfd, "All players have joined. The game can now start!\n", strlen("All players have joined. The game can now start!\n"));
 
     num_rooms++;
 }
 
 
-void join_room(int player_index) {
-    printf("Available Rooms:\n");
+void join_room(int player_index, int connfd) {
+    char room_list[1024] = "Available Rooms:\n";
     for (int i = 0; i < num_rooms; i++) {
         if (rooms[i].num_players < MAX_PLAYERS_PER_ROOM && rooms[i].game_started == 0) {
-            printf("Room %d\n", i + 1);
+            char room_number[50];
+            sprintf(room_number, "Room %d\n", i + 1);
+            strcat(room_list, room_number);
         }
     }
+    write(connfd, room_list, strlen(room_list));
 
     int room_choice;
-    printf("Enter the number of the room you want to join: ");
-    scanf("%d", &room_choice);
+    read(connfd, &room_choice, sizeof(room_choice));
 
     room_choice--;
     if (room_choice < 0 || room_choice >= num_rooms || rooms[room_choice].num_players >= MAX_PLAYERS_PER_ROOM || rooms[room_choice].game_started == 1) {
-        printf("Invalid room choice. Joining failed.\n");
+        write(connfd, "Invalid room choice. Joining failed.\n", strlen("Invalid room choice. Joining failed.\n"));
         return;
     }
 
@@ -288,7 +291,9 @@ void join_room(int player_index) {
 
     users[player_index].in_room = room_choice;
 
-    printf("Joined Room %d.\n", room_choice + 1);
+    char join_message[1024];
+    sprintf(join_message, "Joined Room %d.\n", room_choice + 1);
+    write(connfd, join_message, strlen(join_message));
 }
 
 int checkAnswer(Question q, int user_answer) {
@@ -417,28 +422,26 @@ void quiz(int categoryIndex) {
     printf("Quiz finished! Your final score: %d/%d\n", score, num_questions);
 }
 
-void login() {
+void login(int connfd) {
     char username[MAX_USERNAME];
     char password[MAX_PASSWORD];
 
-    printf("Enter your username: ");
-    scanf("%s", username);
+    // Receive username from client
+    read(connfd, username, sizeof(username));
 
-    printf("Enter your password: ");
-    scanf("%s", password);
+    // Receive password from client
+    read(connfd, password, sizeof(password));
 
     unsigned long entered_password_hash = hash(password);
 
     for (int i = 0; i < num_users; i++) {
         if (strcmp(users[i].username, username) == 0 && users[i].password_hash == entered_password_hash) {
-            printf("Login successful!\n");
-            printf("Welcome, %s!\n", username);
+            write(connfd, "Login successful!\n", strlen("Login successful!\n"));
+
             while (1) {
-                printf("What would you like to do?\n");
-                printf("1. Create a Room\n2. Join a Room\n3. Start Quiz\n4. View High Scores\n5. Logout\n");
+                // Receive choice from client
                 int choice;
-                printf("Enter your choice: ");
-                scanf("%d", &choice);
+                read(connfd, &choice, sizeof(choice));
 
                 switch (choice) {
                     case 1:
@@ -448,34 +451,28 @@ void login() {
                         join_room(i); 
                         break;
                     case 3:
-                        startGame();
+                        quiz(categoryIndex, connfd); // This function should be adapted for server-client model
                         break;
                     case 4:
                         // View High Scores 
                         break;
                     case 5:
-                        printf("Logging out...\n");
+                        write(connfd, "Logging out...\n", strlen("Logging out...\n"));
                         return;
                     default:
-                        printf("Invalid choice. Please enter a valid option.\n");
+                        write(connfd, "Invalid choice. Please enter a valid option.\n", strlen("Invalid choice. Please enter a valid option.\n"));
                         break;
                 }
             }
         }
     }
 
-    printf("Invalid username or password.\n");
+    write(connfd, "Invalid username or password.\n", strlen("Invalid username or password.\n"));
 }
 
+
 int main() {
-    int server_socket = connect_to_server();
-    srand(time(NULL)); 
-
-    load_users(); 
-
-    for (int i = 0; i < MAX_CATEGORIES; i++) {
-        initializeCategory(i);
-    }
+    int sockfd = connect_to_server();
 
     int choice;
     do {
@@ -487,17 +484,20 @@ int main() {
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
+        // Send choice to server
+        write(sockfd, &choice, sizeof(choice));
+
         switch (choice) {
             case 1:
-                signup();
+                signup(sockfd);
                 break;
             case 2:
-                login();
+                login(sockfd);
                 break;
             case 3:
                 // The server should send game data after the connection is established
                 char game_data[1024];
-                read(server_socket, game_data, sizeof(game_data));
+                read(sockfd, game_data, sizeof(game_data));
 
                 // Start your game here using the game_data
                 startGame(game_data);
@@ -510,6 +510,6 @@ int main() {
         }
     } while (choice != 4);
 
-    close(server_socket);
+    close(sockfd);
     return 0;
 }
