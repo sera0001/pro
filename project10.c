@@ -180,23 +180,23 @@ void cs(int difficulty) {
     displayCategoryQuestions(5);
 }
 
-void startGame(char* game_data) {
-    printf("Welcome to the Quiz Game!\n");
-
-    // Use the game_data here if necessary
-    // ...
+void startGame(int connfd) {
+    char welcomeMessage[] = "Welcome to the Quiz Game!\n";
+    send(connfd, welcomeMessage, sizeof(welcomeMessage), 0);
 
     int categoryChoice;
     do {
-        printf("Choose a category:\n");
-        printf("1. Films\n2. Sports\n3. Science\n4. History\n5. Art\n6. Computer Science\n");
-        printf("Enter the number of your chosen category (1-6): ");
-        scanf("%d", &categoryChoice);
+        char categoryMessage[] = "Choose a category:\n1. Films\n2. Sports\n3. Science\n4. History\n5. Art\n6. Computer Science\nEnter the number of your chosen category (1-6): ";
+        send(connfd, categoryMessage, sizeof(categoryMessage), 0);
+
+        recv(connfd, &categoryChoice, sizeof(categoryChoice), 0);
 
         if (categoryChoice < 1 || categoryChoice > MAX_CATEGORIES) {
-            printf("Invalid choice. Please enter a number between 1 and %d.\n", MAX_CATEGORIES);
+            char invalidChoiceMessage[50];
+            sprintf(invalidChoiceMessage, "Invalid choice. Please enter a number between 1 and %d.\n", MAX_CATEGORIES);
+            send(connfd, invalidChoiceMessage, sizeof(invalidChoiceMessage), 0);
         } else {
-            quiz(categoryChoice - 1 , connfd);
+            quiz(categoryChoice - 1, connfd);
         }
     } while (categoryChoice >= 1 && categoryChoice <= MAX_CATEGORIES);
 }
