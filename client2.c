@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 
 #define SERVER_IP "127.0.0.1" // replace with your server IP
-#define SERVER_PORT 12345 // replace with your server port
+#define SERVER_PORT 2000 // replace with your server port
 
 int connect_to_server() {
     int sockfd;
