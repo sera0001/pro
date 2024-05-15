@@ -32,3 +32,19 @@ int connect_to_server() {
 
     return sockfd;
 }
+int main() {
+    int sockfd = connect_to_server();
+
+    if (sockfd < 0) {
+        printf("Failed to connect to server.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Connected to server.\n");
+
+    // Add your client code here...
+
+    close(sockfd);
+    return EXIT_SUCCESS;
+}
+
