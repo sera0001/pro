@@ -44,14 +44,14 @@ int main() {
         scanf("%d", &choice);
 
         // Send choice to server
-        write(sockfd, &choice, sizeof(choice));
+        send(sockfd, &choice, sizeof(choice), 0);
 
         // Now let's handle the server's response
         char server_response[1024]; // Adjust the size as needed
-        int bytes_received = read(sockfd, server_response, sizeof(server_response) - 1);
+        int bytes_received = recv(sockfd, server_response, sizeof(server_response) - 1, 0);
 
         if (bytes_received < 0) {
-            perror("read failed");
+            perror("recv failed");
             exit(EXIT_FAILURE);
         }
 
