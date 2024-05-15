@@ -33,7 +33,7 @@ int main() {
 
     printf("Connected to the server at %s:%d\n", SERVER_IP, SERVER_PORT);
 
-    int choice;
+   int choice;
     do {
         printf("\n--- Menu ---\n");
         printf("1. Signup\n");
@@ -43,8 +43,10 @@ int main() {
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
-        // Send choice to server
-        send(sockfd, &choice, sizeof(choice), 0);
+        // Send choice to server as text
+        char choice_str[10];
+        sprintf(choice_str, "%d", choice);
+        send(sockfd, choice_str, strlen(choice_str) + 1, 0);
 
         // Now let's handle the server's response
         char server_response[1024]; // Adjust the size as needed
