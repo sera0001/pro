@@ -85,7 +85,7 @@ int main() {
     }
 
     // Listen for connections
-    if (listen(sockfd, 5) != 0) {
+    if (listen(sockfd, PENDING_CONNECTIONS) != 0) {
         perror("Listen failed");
         exit(EXIT_FAILURE);
     }
@@ -107,6 +107,7 @@ int main() {
         if (pthread_create(&tid, NULL, handle_client, new_sock) != 0) {
             perror("Failed to create thread");
             close(connfd);
+            continue;
         }
     }
 
