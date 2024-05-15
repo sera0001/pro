@@ -502,11 +502,15 @@ void *handle_client(void *arg) {
     int choice;
     do {
         char menuMessage[] = "\n--- Menu ---\n1. Signup\n2. Login\n3. Play as a guest\n4. Exit\nEnter your choice: ";
-        send(connfd, menuMessage, sizeof(menuMessage), 0);
+        ssize_t bytes_sent = send(connfd, menuMessage, sizeof(menuMessage), 0);
+        if (bytes_sent < 0) {
+            perror("Error sending menu message");
+            break;
+        }
 
-        int bytes_received = recv(connfd, &choice, sizeof(choice), 0);
+        ssize_t bytes_received = recv(connfd, &choice, sizeof(choice), 0);
         if (bytes_received <= 0) {
-            printf("Client disconnected.\n");
+            perror("Error receiving client choice or client disconnected");
             break; // Exit the loop if client disconnected
         }
 
@@ -521,31 +525,35 @@ void *handle_client(void *arg) {
                 break;
             case 3:
                 printf("Client chose to play as a guest.\n");
-                // The server should send game data after the connection is established
                 char game_data[1024];
-                recv(connfd, game_data, sizeof(game_data), 0);
-
-                // Start your game here using the game_data
+                ssize_t bytes_received_game_data = recv(connfd, game_data, sizeof(game_data), 0);
+                if (bytes_received_game_data < 0) {
+                    perror("Error receiving game data");
+                    break;
+                }
                 startGame(connfd);
                 break;
             case 4:
                 printf("Client chose to exit.\n");
                 char exitMessage[] = "Exiting program...\n";
-                send(connfd, exitMessage, sizeof(exitMessage), 0);
+                ssize_t bytes_sent_exit = send(connfd, exitMessage, sizeof(exitMessage), 0);
+                if (bytes_sent_exit < 0) {
+                    perror("Error sending exit message");
+                }
                 break;
-              default:
-    printf("Client chose an invalid option.\n");
-    char invalidChoiceMessage[] = "Invalid choice. Please enter a number from 1 to 4.\n";
-    send(connfd, invalidChoiceMessage, sizeof(invalidChoiceMessage), 0);
-    continue;
-
+            default:
+                printf("Client chose an invalid option.\n");
+                char invalidChoiceMessage[] = "Invalid choice. Please enter a number from 1 to 4.\n";
+                ssize_t bytes_sent_invalid = send(connfd, invalidChoiceMessage, sizeof(invalidChoiceMessage), 0);
+                if (bytes_sent_invalid < 0) {
+                    perror("Error sending invalid choice message");
+                }
         }
     } while (choice != 4);
 
     close(connfd);
     return NULL;
 }
-
 
 int main() {
     int sockfd, connfd, len;
