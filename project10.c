@@ -59,8 +59,7 @@ User users[MAX_USERS];
 Room rooms[MAX_ROOMS];
 Question questions[MAX_QUESTIONS * MAX_CATEGORIES];
 
-void quiz(int categoryIndex);
-
+void quiz(int categoryIndex, int connfd);
 
 int num_users = 0;
 int num_rooms = 0;
@@ -197,7 +196,7 @@ void startGame(char* game_data) {
         if (categoryChoice < 1 || categoryChoice > MAX_CATEGORIES) {
             printf("Invalid choice. Please enter a number between 1 and %d.\n", MAX_CATEGORIES);
         } else {
-            quiz(categoryChoice - 1);
+            quiz(categoryChoice - 1 , connfd);
         }
     } while (categoryChoice >= 1 && categoryChoice <= MAX_CATEGORIES);
 }
@@ -449,10 +448,10 @@ void login(int connfd) {
 
                 switch (choice) {
                     case 1:
-                        create_room(i); 
+                        create_room(i , connfd); 
                         break;
                     case 2:
-                        join_room(i); 
+                        join_room(i , connfd); 
                         break;
                     case 3:
                         quiz(categoryIndex, connfd); // This function should be adapted for server-client model
