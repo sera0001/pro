@@ -181,8 +181,11 @@ void cs(int difficulty) {
     displayCategoryQuestions(5);
 }
 
-void startGame() {
+void startGame(char* game_data) {
     printf("Welcome to the Quiz Game!\n");
+
+    // Use the game_data here if necessary
+    // ...
 
     int categoryChoice;
     do {
@@ -194,11 +197,11 @@ void startGame() {
         if (categoryChoice < 1 || categoryChoice > MAX_CATEGORIES) {
             printf("Invalid choice. Please enter a number between 1 and %d.\n", MAX_CATEGORIES);
         } else {
-          
             quiz(categoryChoice - 1);
         }
     } while (categoryChoice >= 1 && categoryChoice <= MAX_CATEGORIES);
 }
+
 void signup() {
     if (num_users >= MAX_USERS) {
         printf("User limit reached. Signup failed.\n");
@@ -470,15 +473,16 @@ int main() {
 
     load_users(); 
 
-     for (int i = 0; i < MAX_CATEGORIES; i++) {
+    for (int i = 0; i < MAX_CATEGORIES; i++) {
         initializeCategory(i);
     }
+
     int choice;
     do {
         printf("\n--- Menu ---\n");
         printf("1. Signup\n");
         printf("2. Login\n");
-        printf("3. play as a gust\n");
+        printf("3. Play as a guest\n");
         printf("4. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -491,15 +495,21 @@ int main() {
                 login();
                 break;
             case 3:
-                startGame();
+                // The server should send game data after the connection is established
+                char game_data[1024];
+                read(server_socket, game_data, sizeof(game_data));
+
+                // Start your game here using the game_data
+                startGame(game_data);
                 break;
             case 4:
                 printf("Exiting program...\n");
                 break;
             default:
-                printf("Invalid choice. Please enter a number from 1 to 3.\n");
+                printf("Invalid choice. Please enter a number from 1 to 4.\n");
         }
-    } while (choice != 3);
+    } while (choice != 4);
 
+    close(server_socket);
     return 0;
 }
