@@ -434,6 +434,16 @@ void quiz(int categoryIndex, int connfd) {
 void login(int connfd) {
     char username[MAX_USERNAME];
     char password[MAX_PASSWORD];
+   
+
+    printf("Enter your username: ");
+    scanf("%s", username);
+    printf("Enter your password: ");
+    scanf("%s", password);
+
+    // Send the username and password to the server
+    write(sockfd, username, sizeof(username));
+    write(sockfd, password, sizeof(password));
 
     // Receive username from client
     if (read(connfd, username, sizeof(username)) == -1) {
